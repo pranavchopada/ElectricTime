@@ -10,10 +10,10 @@
     </div>
     <ul class="nav nav-tabs justify-content-center" id="myTab" role="tablist">
       <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#dist-tab-pane" type="button" role="tab" aria-controls="dist-tab-pane" aria-selected="true"><h5 class="mb-1">Time</h5></button>
+        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#dist-tab-pane" type="button" role="tab" aria-controls="dist-tab-pane" aria-selected="true"><h5 class="mb-1">Distance</h5></button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#tim-tab-pane" type="button" role="tab" aria-controls="tim-tab-pane" aria-selected="false"><h5 class="mb-1">Distance</h5></button>
+        <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#tim-tab-pane" type="button" role="tab" aria-controls="tim-tab-pane" aria-selected="false"><h5 class="mb-1">Time</h5></button>
       </li>
     </ul>
     <br>
@@ -74,13 +74,15 @@
     const ev = '<%-locals.ev%>'
     const time = JSON.parse('<%-JSON.stringify(locals.time)%>')
     const distance = '<%-locals.distance%>'
-    let tab = document.getElementById('distance_entry')
-    tab.value = distance
+
+    document.getElementById('dropdown1').value = ev;
+    document.getElementById('distance_entry').value = distance
+    
     if (Number(time[ev])==-1) {
-      document.getElementById('text_ev').innerHTML += '<b>'+electricVehicles[ev-1]+ '</b> will run out of range and will not cover ' + distance +' miles.'
+      document.getElementById('text_ev').innerHTML += '<b>'+electricVehicles[ev-1]+ '</b> will run out of range and will not travel ' + distance +' miles.'
     }
     else {
-      document.getElementById('text_ev').innerHTML += '<b>'+electricVehicles[ev-1]+ '</b> will take <b>' + time[ev] + '</b> mins to cover ' + distance +' miles.'
+      document.getElementById('text_ev').innerHTML += '<b>'+electricVehicles[ev-1]+ '</b> will take <b>' + time[ev] + '</b> mins to travel ' + distance +' miles.'
     }
     document.getElementById('result_render').innerHTML += '<thead><tr class="table-light"><th scope="col">Alternate Transport Modes</th><th scope="col">Time (minutes)</th></tr></thead><tbody>'
     for (const key of Object.keys(time)){
@@ -103,9 +105,15 @@
     const ev = '<%=locals.ev%>'
     const distance = JSON.parse('<%-JSON.stringify(locals.distance)%>')
     const time = '<%-locals.time %>'
+    
+    document.getElementById('profile-tab').classList.add("active")
+    document.getElementById('tim-tab-pane').className += "show active"
 
-    let tab = document.getElementById('time_entry')
-    tab.value = '<%-locals.time%>'
+    document.getElementById('home-tab').classList.remove("active")
+    document.getElementById('dist-tab-pane').className = 'row g-3 tab-pane fade'
+
+    document.getElementById('time_entry').value = '<%-locals.time%>'
+    document.getElementById('dropdown2').value = ev;
 
     if (Number(distance[ev])==-1) {
       document.getElementById('text_ev').innerHTML += '<b>'+electricVehicles[ev-1]+ '</b> will run out of range and will not be able to travel for ' + time + ' minutes.'
