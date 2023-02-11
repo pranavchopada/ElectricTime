@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<head><title>Electric Time!</title>
+</head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+<div class="container">
+  <main>
+    <div class="py-5 text-center">
+      <h1>Electric Time!</h1>
+    </div>
+    <ul class="nav nav-tabs justify-content-center" id="myTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#dist-tab-pane" type="button" role="tab" aria-controls="dist-tab-pane" aria-selected="true"><h5 class="mb-1">Time</h5></button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#tim-tab-pane" type="button" role="tab" aria-controls="tim-tab-pane" aria-selected="false"><h5 class="mb-1">Distance</h5></button>
+      </li>
+    </ul>
+    <br>
+      <div class="tab-content text-center" id="myTabContent">
+        <form class="row g-3 tab-pane fade show active" id="dist-tab-pane" action="/" method="post">
+          <div class="col-3 mx-auto">
+            <input type="number" name="distance" id="distance_entry" class="form-control" placeholder="Enter distance in miles" min="0" step="0.01" data-bind="value:replyNumber" />
+          </div>
+          <div class="col-3 mx-auto">
+            <select class="form-select" name="ev" id="dropdown1" required>
+              <option disabled="disabled" selected>Choose Transport Mode</option>
+            </select>
+          </div>
+          <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+        <form class="row g-3 tab-pane fade" id="tim-tab-pane" action="/" method="post">
+          <div class="col-3 mx-auto">
+            <input type="number" name="time" id="time_entry" class="form-control" placeholder="Enter time in minutes" min="0" step="0.01" data-bind="value:replyNumber" />
+          </div>
+          <div class="col-3 mx-auto">
+            <select class="form-select" name="ev" id="dropdown2" required>
+              <option disabled="disabled" selected>Choose Transport Mode</option>
+            </select>
+          </div>
+          <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+        <br>
+        <div class="col-md-8 col-lg-6 order-md-last mx-auto">
+          <div class="mx-auto" id="text_ev"></div>
+          <br>
+          <table class="table" id="result_render">
+          </table>
+        </div>
+      </div>
+  </main>
+</div>
+<script>
+  const electricVehicles = ['Walking', 'Boosted Mini S Board', 'Evolve Bamboo GTR 2in1', 'OneWheel XR', 
+  'MotoTec Skateboard', 'Segway Ninebot S', 'Segway Ninebot S-PLUS', 'Razor Scooter',
+  'GeoBlade 500', 'Hovertrax Hoverboard']
+  const dropdown_list_1 = document.getElementById("dropdown1")
+  const dropdown_list_2 = document.getElementById("dropdown2")
+  for (i in electricVehicles) {
+    dropdown_list_1.innerHTML += '<option value="'+(Number(i)+1)+'">'+electricVehicles[i]+'</option>'
+    dropdown_list_2.innerHTML += '<option value="'+(Number(i)+1)+'">'+electricVehicles[i]+'</option>'
+  }
+  const url = window.location.href.split('/')
+  let c = ''
+  const check = '<%-locals.check%>'
+  if (check == 'false') {
+    c = '<%-locals.arg %>'
+  }
+  if (c == 'time') {
+    const ev = '<%-locals.ev%>'
+    const time = JSON.parse('<%-JSON.stringify(locals.time)%>')
+    const distance = '<%-locals.distance%>'
+    let tab = document.getElementById('distance_entry')
+    tab.value = distance
+    if (Number(time[ev])==-1) {
+      document.getElementById('text_ev').innerHTML += '<b>'+electricVehicles[ev-1]+ '</b> will run out of range and will not cover ' + distance +' miles.'
+    }
+    else {
+      document.getElementById('text_ev').innerHTML += '<b>'+electricVehicles[ev-1]+ '</b> will take <b>' + time[ev] + '</b> mins to cover ' + distance +' miles.'
+    }
+    document.getElementById('result_render').innerHTML += '<thead><tr class="table-light"><th scope="col">Alternate Transport Modes</th><th scope="col">Time (minutes)</th></tr></thead><tbody>'
+    for (const key of Object.keys(time)){
+      if (key == ev) {
+        continue
+      }
+      if (Number(time[key]) < 0){
+        document.getElementById('result_render').innerHTML += '<tr class="table-danger"><td>'+electricVehicles[key-1]+'</td><td>Out of range</td></tr>'
+      }
+      else if (Number(time[key]) <= Number(time[ev]) || Number(time[ev])<0){
+        document.getElementById('result_render').innerHTML += '<tr class="table-success"><td>'+electricVehicles[key-1]+'</td><td>'+time[key]+'</td></tr>'
+      }
+      else {
+        document.getElementById('result_render').innerHTML += '<tr><td>'+electricVehicles[key-1]+'</td><td>'+time[key]+'</td></tr>'
+      }
+    }
+    document.getElementById('result_render').innerHTML += '</tbody>'
+  }
+  else if (c == 'distance') {
+    const ev = '<%=locals.ev%>'
+    const distance = JSON.parse('<%-JSON.stringify(locals.distance)%>')
+    const time = '<%-locals.time %>'
+
+    let tab = document.getElementById('time_entry')
+    tab.value = '<%-locals.time%>'
+
+    if (Number(distance[ev])==-1) {
+      document.getElementById('text_ev').innerHTML += '<b>'+electricVehicles[ev-1]+ '</b> will run out of range and will not be able to travel for ' + time + ' minutes.'
+    }
+    else {
+      document.getElementById('text_ev').innerHTML += '<b>'+electricVehicles[ev-1]+ '</b> will travel <b>' + distance[ev] + '</b> miles in '+time+' minutes.'
+    }
+    document.getElementById('result_render').innerHTML += '<thead><tr class="table-light"><th scope="col">Alternate Transport Modes</th><th scope="col">Distance (miles)</th></tr></thead><tbody>'
+    for (const key of Object.keys(distance)){
+      if (key == ev) {
+        continue
+      }
+      if (Number(distance[key]) < 0){
+        document.getElementById('result_render').innerHTML += '<tr class="table-danger"><td>'+electricVehicles[key-1]+'</td><td>Out of range</td></tr>'
+      }
+      else if (Number(distance[key]) >= Number(distance[ev]) || Number(distance[ev])<0){
+        document.getElementById('result_render').innerHTML += '<tr class="table-success"><td>'+electricVehicles[key-1]+'</td><td>'+distance[key]+'</td></tr>'
+      }
+      else {
+        document.getElementById('result_render').innerHTML += '<tr><td>'+electricVehicles[key-1]+'</td><td>'+distance[key]+'</td></tr>'
+      }
+    }
+    document.getElementById('result_render').innerHTML += '</tbody>'
+  }
+</script>
+</html>
