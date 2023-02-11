@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
 app.post('/', body('ev').isNumeric(), (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    res.render('error')
+    return res.render('error')
   }
   if (req.body.distance) {
     const result = utils.calculateTime(req.body.distance, req.body.ev)
@@ -28,7 +28,7 @@ app.post('/', body('ev').isNumeric(), (req, res) => {
     res.render('index', {check:false, arg:'distance', ev:result['ev'], distance:result['distance'], time:req.body.time})
   }
   else {
-    res.render('error')
+    return res.render('error')
   }
 })
 
