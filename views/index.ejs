@@ -20,7 +20,7 @@
       <div class="tab-content text-center" id="myTabContent">
         <form class="row g-3 tab-pane fade show active" id="dist-tab-pane" action="/" method="post">
           <div class="col-3 mx-auto">
-            <input type="number" name="distance" id="distance_entry" class="form-control" placeholder="Enter distance in miles" min="0" step="0.01" data-bind="value:replyNumber" />
+            <input type="number" name="distance" id="distance_entry" class="form-control" placeholder="Enter distance in miles" min="0" step="0.01" data-bind="value:replyNumber" required/>
           </div>
           <div class="col-3 mx-auto">
             <select class="form-select" name="ev" id="dropdown1" required>
@@ -33,7 +33,7 @@
         </form>
         <form class="row g-3 tab-pane fade" id="tim-tab-pane" action="/" method="post">
           <div class="col-3 mx-auto">
-            <input type="number" name="time" id="time_entry" class="form-control" placeholder="Enter time in minutes" min="0" step="0.01" data-bind="value:replyNumber" />
+            <input type="number" name="time" id="time_entry" class="form-control" placeholder="Enter time in minutes" min="0" step="0.01" data-bind="value:replyNumber" required/>
           </div>
           <div class="col-3 mx-auto">
             <select class="form-select" name="ev" id="dropdown2" required>
